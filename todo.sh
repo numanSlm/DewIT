@@ -52,3 +52,60 @@ todoaddfunc () {
         echo -e "Item \"$TODO_ITEM\" added to $LIST list!"
     fi
 }
+
+todormfunc () {
+    LIST="$(echo -e "$@" | cut -f2 -d" ")"
+    if [ -z "$LIST" ]; then
+        helpfunc
+        exit 1
+    fi
+    ITEM_CHECK="$(echo -e "$@" | cut -f3 -d" ")"
+    if [ -z "$ITEM_CHECK" ]; then
+        echo -e "Item input required!"
+        echo
+        helpfunc
+        exit 1
+    fi
+    case $ITEM_CHECK in
+        all)
+            read -p "Remove all items in $LIST? Y/N " RMANSWER
+            echo
+            case $RMANSWER in
+                y*|Y*)
+                    rm -rf "$TODO_DIR"/"$LIST"
+                    echo -e "All items in $LIST have been removed!"
+                    ;;
+                *)
+                    echo -e "Items in $LIST were not removed."
+                    ;;
+            esac
+            ;;
+        *)
+            TODO_ITEM="$(echo -e "$@" | cut -f3 -d" ")"
+            if [ -z "$TODO_ITEM" ]; then
+                echo -e "Item input required!"
+                helpfunc
+                exit 1
+            fi
+            if [ -f "$TODO_DIR"/"$LIST"/"$TODO_ITEM" ]; then
+                echo -e "Item $TODO_ITEM removed from $LIST!"
+                cat "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                rm "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                if [ "$(dir "$TODO_DIR"/"$LIST" | wc -w)" = "0" ]; then
+                    rm -r "$TODO_DIR"/"$LIST"
+                else
+                    for file in $(dir -C -w 1 "$TODO_DIR"/"$LIST" | sort -n); do
+                        if [ "$file" -gt "$TODO_ITEM" ]; then
+                            FILE_NAME="$(($file-1))"
+                            mv "$TODO_DIR"/"$LIST"/"$file" "$TODO_DIR"/"$LIST"/"$FILE_NAME"
+                        fi
+                    done
+                fi
+            else
+                echo -e "Item $TODO_ITEM not found in $LIST!"
+                exit 1
+            fi
+            ;;
+    esac
+}
+
