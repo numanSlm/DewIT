@@ -2,7 +2,7 @@
 # Trying to write a todo bash script to master by Bash skills
 # todo add, edit,done, remove, implement sed
 
-
+#Add ele func
 todoaddfunc () {
     LIST="$(echo -e "$@" | cut -f2 -d" ")"
     if [ -z "$LIST" ]; then
@@ -52,6 +52,8 @@ todoaddfunc () {
         echo -e "Item \"$TODO_ITEM\" added to $LIST list!"
     fi
 }
+
+#Remove ele func
 
 todormfunc () {
     LIST="$(echo -e "$@" | cut -f2 -d" ")"
@@ -107,5 +109,58 @@ todormfunc () {
             fi
             ;;
     esac
+}
+
+#Edit ele func
+todoeditfunc () {
+    LIST="$(echo -e "$@" | cut -f2 -d" ")"
+    if [ -z "$LIST" ]; then
+        helpfunc
+        exit 1
+    fi
+    if echo -e "$@" | cut -f4 -d" " | grep -q '='; then
+        IMPORTANT_LEVEL="$(echo -e "$@" | cut -f2 -d"=" | cut -f1 -d" ")"
+        TODO_ITEM="$(echo -e "$@" | cut -f3 -d" ")"
+        if [ -f "$TODO_DIR"/"$LIST"/"$TODO_ITEM" ]; then
+            case $IMPORTANT_LEVEL in
+                4)
+                    sed -i 's%- \x1b\[[0-9;]*m%- \x1b\[31m%g' "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                    sed -i 's%✘ \x1b\[[0-9;]*m%✘ \x1b\[31m%g' "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                    echo -e "Item \"$TODO_ITEM\" in $LIST changed to importance level 4!"
+                    ;;
+                3)
+                    sed -i 's%- \x1b\[[0-9;]*m%- \x1b\[33m%g' "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                    sed -i 's%✘ \x1b\[[0-9;]*m%✘ \x1b\[33m%g' "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                    echo -e "Item \"$TODO_ITEM\" in $LIST changed to importance level 3!"
+                    ;;
+                2)
+                    sed -i 's%- \x1b\[[0-9;]*m%- \x1b\[32m%g' "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                    sed -i 's%✘ \x1b\[[0-9;]*m%✘ \x1b\[32m%g' "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                    echo -e "Item \"$TODO_ITEM\" in $LIST changed to importance level 2!"
+                    ;;
+                0)
+                    sed -i 's%- \x1b\[[0-9;]*m%- \x1b\[90m%g' "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                    sed -i 's%✘ \x1b\[[0-9;]*m%✘ \x1b\[90m%g' "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                    echo -e "Item \"$TODO_ITEM\" in $LIST changed to importance level 0!"
+                    ;;
+                *)
+                    sed -i 's%- \x1b\[[0-9;]*m%- \x1b\[39m%g' "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                    sed -i 's%✘ \x1b\[[0-9;]*m%✘ \x1b\[39m%g' "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                    echo -e "Item \"$TODO_ITEM\" in $LIST changed to importance level 1!"
+                    ;;
+            esac
+        else
+            echo -e "Item $TODO_ITEM not found in $LIST!"
+            exit 1
+        fi
+    else
+        TODO_ITEM="$(echo -e "$@" | cut -f3 -d" ")"
+        if [ -f "$TODO_DIR"/"$LIST"/"$TODO_ITEM" ]; then
+            $EDITOR "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+        else
+            echo -e "Item $TODO_ITEM not found in $LIST!"
+            exit 1
+        fi
+    fi
 }
 
