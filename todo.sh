@@ -197,3 +197,38 @@ tododonefunc () {
             ;;
     esac
 }
+
+#Undo func
+todoundofunc () {
+    LIST="$(echo -e "$@" | cut -f2 -d" ")"
+    if [ -z "$LIST" ]; then
+        helpfunc
+        exit 1
+    fi
+    TODO_ITEM="$(echo -e "$@" | cut -f3 -d" ")"
+    case $TODO_ITEM in
+        all)
+            echo "Marking all items in $LIST as not done..."
+            for TODO_ITEM in $(dir -C -w 1 "$TODO_DIR"/"$LIST" | sort -n); do
+                if [ -f "$TODO_DIR"/"$LIST"/"$TODO_ITEM" ]; then
+                    sed -i 's%✘ %- %g' "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                    cat "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                else
+                    echo -e "Item $TODO_ITEM not found in $LIST!"
+                    exit 1
+                fi
+            done
+            ;;
+        *)
+            if [ -f "$TODO_DIR"/"$LIST"/"$TODO_ITEM" ]; then
+                sed -i 's%✘ %- %g' "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+                echo -e "Item $TODO_ITEM marked as not done in $LIST!"
+                cat "$TODO_DIR"/"$LIST"/"$TODO_ITEM"
+            else
+                echo -e "Item $TODO_ITEM not found in $LIST!"
+                exit 1
+            fi
+            ;;
+    esac
+}
+
