@@ -274,3 +274,41 @@ todolistfunc () {
         fi
     fi
 }
+
+# move within list
+todomvwithinlistfunc () {
+    if [ ! -f "$TODO_DIR"/"$LIST"/"$TODO_ITEM_1" ] || [ ! -f "$TODO_DIR"/"$LIST"/"$TODO_ITEM_2" ]; then
+        echo "Items $TODO_ITEM_1 and/or $TODO_ITEM_2 not found in $LIST!"
+        exit 1
+    fi
+    mv "$TODO_DIR"/"$LIST"/"$TODO_ITEM_1" "$TODO_DIR"/"$LIST"/"$TODO_ITEM_1"-save
+    if [ "$TODO_ITEM_1" -gt "$TODO_ITEM_2" ]; then
+        for file in $(dir -C -w 1 "$TODO_DIR"/"$LIST" | grep -v '.*-save' | sort -n); do
+            if [ "$file" -le "$TODO_ITEM_1" ] && [ "$file" -ge "$TODO_ITEM_2" ]; then
+                mv "$TODO_DIR"/"$LIST"/"$file" "$TODO_DIR"/"$LIST"/"$file"-temp
+            fi
+        done
+        for file in $(dir -C -w 1 "$TODO_DIR"/"$LIST" | grep '.*-temp' | sort -n); do
+            FILE_NAME="$(echo "$file" | cut -f1 -d"-")"
+            if [ "$FILE_NAME" -le "$TODO_ITEM_1" ]; then
+                FILE_NAME="$(($FILE_NAME+1))"
+                mv "$TODO_DIR"/"$LIST"/"$file" "$TODO_DIR"/"$LIST"/"$FILE_NAME"
+            fi
+        done
+    else
+        for file in $(dir -C -w 1 "$TODO_DIR"/"$LIST" | grep -v '.*-save' | sort -n); do
+            if [ "$file" -le "$TODO_ITEM_2" ] && [ "$file" -ge "$TODO_ITEM_1" ]; then
+                mv "$TODO_DIR"/"$LIST"/"$file" "$TODO_DIR"/"$LIST"/"$file"-temp
+            fi
+        done
+        for file in $(dir -C -w 1 "$TODO_DIR"/"$LIST" | grep '.*-temp' | sort -n); do
+            FILE_NAME="$(echo "$file" | cut -f1 -d"-")"
+            if [ "$FILE_NAME" -le "$TODO_ITEM_2" ]; then
+                FILE_NAME="$(($FILE_NAME-1))"
+                mv "$TODO_DIR"/"$LIST"/"$file" "$TODO_DIR"/"$LIST"/"$FILE_NAME"
+            fi
+        done
+    fi
+    mv "$TODO_DIR"/"$LIST"/"$TODO_ITEM_1"-save "$TODO_DIR"/"$LIST"/"$TODO_ITEM_2"
+    echo "Item $TODO_ITEM_1 moved to position $TODO_ITEM_2 in $LIST!"
+}
