@@ -313,3 +313,29 @@ todomvwithinlistfunc () {
     mv "$TODO_DIR"/"$LIST"/"$TODO_ITEM_1"-save "$TODO_DIR"/"$LIST"/"$TODO_ITEM_2"
     echo "Item $TODO_ITEM_1 moved to position $TODO_ITEM_2 in $LIST!"
 }
+
+
+#move items in the list
+todomvitemlistfunc () {
+    LIST_2="$TODO_ITEM_2"
+    if [ ! -f "$TODO_DIR"/"$LIST"/"$TODO_ITEM_1" ]; then
+        echo "Item $TODO_ITEM_1 not found in $LIST!"
+        exit 1
+    fi
+    if [ ! -d "$TODO_DIR"/"$LIST_2" ]; then
+        mkdir "$TODO_DIR"/"$LIST_2"
+    fi
+    FILE_NAME="$(($(dir "$TODO_DIR"/"$LIST_2" | wc -w)+1))"
+    mv "$TODO_DIR"/"$LIST"/"$TODO_ITEM_1" "$TODO_DIR"/"$LIST_2"/"$FILE_NAME"
+    echo "Item $TODO_ITEM_1 has been moved from $LIST to $LIST_2!"
+    if [ "$(dir "$TODO_DIR"/"$LIST" | wc -w)" = "0" ]; then
+        rm -r "$TODO_DIR"/"$LIST"
+    else
+        for file in $(dir -C -w 1 "$TODO_DIR"/"$LIST" | sort -n); do
+            if [ "$file" -gt "$TODO_ITEM_1" ]; then
+                FILE_NAME="$(($file-1))"
+                mv "$TODO_DIR"/"$LIST"/"$file" "$TODO_DIR"/"$LIST"/"$FILE_NAME"
+            fi
+        done
+    fi
+}
