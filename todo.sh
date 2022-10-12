@@ -339,3 +339,18 @@ todomvitemlistfunc () {
         done
     fi
 }
+
+#mv listing
+todomvlistlistfunc () {
+    LIST_2="$TODO_ITEM_1"
+    if [ ! -d "$TODO_DIR"/"$LIST_2" ]; then
+        mkdir "$TODO_DIR"/"$LIST_2"
+    fi
+    for item in $(dir -C -w 1 "$TODO_DIR"/"$LIST" | sort -n); do
+        FILE_NAME="$(($(dir "$TODO_DIR"/"$LIST_2" | wc -w)+1))"
+        mv "$TODO_DIR"/"$LIST"/"$item" "$TODO_DIR"/"$LIST_2"/"$FILE_NAME"
+    done
+    echo "All items in $LIST moved to $LIST_2!"
+    rm -r "$TODO_DIR"/"$LIST"
+}
+
