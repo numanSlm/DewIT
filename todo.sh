@@ -232,48 +232,6 @@ todoundofunc () {
     esac
 }
 
-#List func
-todolistfunc () {
-    LIST="$(echo -e "$@" | cut -f2 -d" ")"
-    if [ "$(dir "$TODO_DIR" | wc -w)" = "0" ]; then
-        echo -e "No lists made yet!"
-        echo
-        helpfunc
-        exit 1
-    fi
-    if [ -z "$LIST" ]; then
-        echo
-        echo -e "$(tput bold)All todo lists$(tput sgr0):"
-        echo
-        for dir in $(dir "$TODO_DIR"); do
-            echo -e "$(tput bold)$dir$(tput sgr0):"
-            for file in $(dir -C -w 1 "$TODO_DIR"/"$dir" | sort -n); do
-                if [ "$file" -lt "10" ]; then
-                    echo -e " $file $(cat "$TODO_DIR"/"$dir"/"$file")"
-                else
-                    echo -e "$file $(cat "$TODO_DIR"/"$dir"/"$file")"
-                fi
-            done
-            echo
-        done
-    else
-        if [ -d "$TODO_DIR"/"$LIST" ]; then
-                echo
-                echo -e "$(tput bold)$LIST$(tput sgr0):"
-                for file in $(dir -C -w 1 "$TODO_DIR"/"$LIST" | sort -n); do
-                    if [ "$file" -lt "10" ]; then
-                        echo -e " $file $(cat "$TODO_DIR"/"$LIST"/"$file")"
-                    else
-                        echo -e "$file $(cat "$TODO_DIR"/"$LIST"/"$file")"
-                    fi
-                done
-                echo
-        else
-            echo -e "$LIST not found!"
-            exit 1
-        fi
-    fi
-}
 
 
 # move within list
@@ -389,3 +347,55 @@ todomvfunc () {
             ;;
     esac
 }
+
+
+#List func
+todolistfunc () {
+    LIST="$(echo -e "$@" | cut -f2 -d" ")"
+    if [ "$(dir "$TODO_DIR" | wc -w)" = "0" ]; then
+        echo -e "No lists made yet!"
+        echo
+        helpfunc
+        exit 1
+    fi
+    if [ -z "$LIST" ]; then
+        echo
+        echo -e "$(tput bold)All todo lists$(tput sgr0):"
+        echo
+        for dir in $(dir "$TODO_DIR"); do
+            echo -e "$(tput bold)$dir$(tput sgr0):"
+            for file in $(dir -C -w 1 "$TODO_DIR"/"$dir" | sort -n); do
+                if [ "$file" -lt "10" ]; then
+                    echo -e " $file $(cat "$TODO_DIR"/"$dir"/"$file")"
+                else
+                    echo -e "$file $(cat "$TODO_DIR"/"$dir"/"$file")"
+                fi
+            done
+            echo
+        done
+    else
+        if [ -d "$TODO_DIR"/"$LIST" ]; then
+                echo
+                echo -e "$(tput bold)$LIST$(tput sgr0):"
+                for file in $(dir -C -w 1 "$TODO_DIR"/"$LIST" | sort -n); do
+                    if [ "$file" -lt "10" ]; then
+                        echo -e " $file $(cat "$TODO_DIR"/"$LIST"/"$file")"
+                    else
+                        echo -e "$file $(cat "$TODO_DIR"/"$LIST"/"$file")"
+                    fi
+                done
+                echo
+        else
+            echo -e "$LIST not found!"
+            exit 1
+        fi
+    fi
+}
+
+
+if [ -z "$TODO_DIR" ]; then
+    TODO_DIR="$HOME/.todo"
+fi
+if [ ! -d "$TODO_DIR" ]; then
+    mkdir "$TODO_DIR"
+fi
