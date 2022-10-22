@@ -354,3 +354,38 @@ todomvlistlistfunc () {
     rm -r "$TODO_DIR"/"$LIST"
 }
 
+#mv func
+todomvfunc () {
+    LIST="$(echo -e "$@" | cut -f2 -d" ")"
+    if [ -z "$LIST" ]; then
+        helpfunc
+        exit 1
+    elif [ ! -d "$TODO_DIR"/"$LIST" ]; then
+        echo "$LIST does not exist!"
+        exit 1
+    fi
+    TODO_ITEM_1="$(echo -e "$@" | cut -f3 -d" ")"
+    TODO_ITEM_2="$(echo -e "$@" | cut -f4 -d" ")"
+    if [ "$TODO_ITEM_1" = "$TODO_ITEM_2" ]; then
+        echo "$TODO_ITEM_1 and $TODO_ITEM_2 are the same!"
+        exit 1
+    elif [ "$TODO_ITEM_1" = "$LIST" ]; then
+        echo "$TODO_ITEM_1 and $LIST are the same!"
+        exit 1
+    fi
+    case $TODO_ITEM_1 in
+        1*|2*|3*|4*|5*|6*|7*|8*|9*)
+            case $TODO_ITEM_2 in
+                1*|2*|3*|4*|5*|6*|7*|8*|9*)
+                    todomvwithinlistfunc
+                    ;;
+                *)
+                    todomvitemlistfunc
+                    ;;
+            esac
+            ;;
+        *)
+            todomvlistlistfunc
+            ;;
+    esac
+}
