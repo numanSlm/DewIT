@@ -1,6 +1,6 @@
 #!/bin/bash 
 # Trying to write a todo bash script to master by Bash skills
-# todo add, edit,done, remove, implement sed
+# program that manages todo lists in "$TODO_DIR"/
 
 #Add ele func
 todoaddfunc () {
