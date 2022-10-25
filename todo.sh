@@ -399,3 +399,61 @@ fi
 if [ ! -d "$TODO_DIR" ]; then
     mkdir "$TODO_DIR"
 fi
+
+
+#main invoke func
+
+if type todo >/dev/null 2>&1 && [ -f ~/.zshrc ] && ! grep -q 'todo.comp' ~/.zshrc; then
+    REALPATH="$(readlink -f $0)"
+    RUNNING_DIR="$(dirname "$REALPATH")"
+    if [ -f "$RUNNING_DIR"/todo.comp ]; then
+        cp "$RUNNING_DIR"/todo.comp "$TODO_DIR"/.todo.comp
+        echo "" >> ~/.zshrc
+        echo "if [ -f "$TODO_DIR"/.todo.comp ]; then" >> ~/.zshrc
+        echo "    source "$TODO_DIR"/.todo.comp" >> ~/.zshrc
+        echo "    compdef _todo todo" >> ~/.zshrc
+        echo "fi" >> ~/.zshrc
+    fi
+elif type todo >/dev/null 2>&1 && [ -f ~/.zshrc ]; then
+    REALPATH="$(readlink -f $0)"
+    RUNNING_DIR="$(dirname "$REALPATH")"
+    if [ -f "$RUNNING_DIR"/todo.comp ]; then
+        cp "$RUNNING_DIR"/todo.comp "$TODO_DIR"/.todo.comp
+    fi
+fi
+
+case $1 in
+    add)
+        todoaddfunc "$@"
+        exit 0
+        ;;
+    edit)
+        todoeditfunc "$@"
+        exit 0
+        ;;
+    done)
+        tododonefunc "$@"
+        exit 0
+        ;;
+    undo)
+        todoundofunc "$@"
+        exit 0
+        ;;
+    mv)
+        todomvfunc "$@"
+        exit 0
+        ;;
+    rm)
+        todormfunc "$@"
+        exit 0
+        ;;
+    help|--help)
+        helpfunc "$@"
+        exit 0
+        ;;
+    *)
+        todolistfunc "$@"
+        exit 0
+        ;;
+esac
+
