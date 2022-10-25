@@ -2,6 +2,32 @@
 # Trying to write a todo bash script to master by Bash skills
 # program that manages todo lists in "$TODO_DIR"/
 
+helpfunc () {
+HELP_OPTION="$(echo -e "$@" | cut -f2 -d" ")"
+case $HELP_OPTION in
+e*|E*|-e*|--e*)
+printf "
+todo usage examples:
+    todo                        # Lists all items in all todo lists
+    todo mylist                 # Lists all items in mylist
+    todo add mylist my item     # Adds my item to mylist
+    todo add mylist i=4 item    # Adds item to mylist with importance level 4
+    todo done mylist 1          # Marks item 1 in mylist with an X
+    todo done mylist all        # Marks all items in mylist with an X
+    todo undo mylist 1          # Removes X from item 1 in mylist
+    todo undo mylist all        # Removes X from all items in mylist
+    todo edit mylist 1          # Opens the default editor to edit item 1 in mylist
+    todo edit mylist 1 i=4      # Change the importance level for item 1 in mylist to level 4
+    todo mv mylist 1 2          # Moves item 1 from mylist to position 2
+    todo mv mylist 1 mylist2    # Moves item 1 from mylist to mylist2
+    todo mv mylist mylist2      # Moves all items from mylist to mylist2
+    todo rm mylist 1            # Removes item 1 from mylist
+    todo rm mylist all          # Removes all items from mylist
+"
+;;
+*)
+
+
 #Add ele func
 todoaddfunc () {
     LIST="$(echo -e "$@" | cut -f2 -d" ")"
