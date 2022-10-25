@@ -26,6 +26,27 @@ todo usage examples:
 "
 ;;
 *)
+printf "
+Usage: todo [OPTION] [ITEM]
+todo manages todo lists in an easy to use manner.  Lists are stored in "$TODO_DIR"/ListName
+with each item in the list stored as a separate file in that directory.
+Options:
+    todo                        # Lists all lists or items in specified list
+    todo add list item          # Adds item to specified list
+    todo add list i=n item      # Adds item to specified list with importance level n (4-0)
+    todo edit list n            # Opens the default editor to edit item n in specified list
+    todo edit list n i=n        # Changes the importance level for item n to importance level n
+    todo done list n|all        # Marks item n or all items in specified list with an X
+    todo undo list n|all        # Removes X from item n or all items in specified list
+    todo mv list n n|list2      # Moves item n from list to n|list2
+    todo mv list list2          # Moves all items from list to list2
+    todo rm list n|all          # Removes n|all from list
+    todo help                   # Show this help output
+See 'todo help examples' for usage examples.
+"
+;;
+esac
+}
 
 
 #Add ele func
